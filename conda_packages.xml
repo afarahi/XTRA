@@ -1,0 +1,9 @@
+<application>
+  <component name="PyCondaPackageService">
+    <option name="CONDA_CHANNELS">
+      <set>
+        <option value="https://github.com/astropy/astroquery/archive/master.zip" />
+      </set>
+    </option>
+  </component>
+</application>

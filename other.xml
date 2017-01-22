@@ -1,0 +1,34 @@
+<application>
+  <component name="PyTestFrameworkService">
+    <option name="SDK_TO_PYTEST">
+      <map>
+        <entry key="/System/Library/Frameworks/Python.framework/Versions/2.6/bin/python2.6" value="false" />
+        <entry key="/System/Library/Frameworks/Python.framework/Versions/2.7/bin/python2.7" value="false" />
+        <entry key="$USER_HOME$/.conda/envs/xxx/bin/python2.7" value="false" />
+        <entry key="/anaconda/bin/python2.7" value="true" />
+        <entry key="/opt/anaconda/anaconda/envs/AryaEnv/bin/python" value="false" />
+        <entry key="/usr/bin/python2.7" value="false" />
+      </map>
+    </option>
+    <option name="SDK_TO_NOSETEST">
+      <map>
+        <entry key="/System/Library/Frameworks/Python.framework/Versions/2.6/bin/python2.6" value="false" />
+        <entry key="/System/Library/Frameworks/Python.framework/Versions/2.7/bin/python2.7" value="false" />
+        <entry key="$USER_HOME$/.conda/envs/xxx/bin/python2.7" value="false" />
+        <entry key="/anaconda/bin/python2.7" value="true" />
+        <entry key="/opt/anaconda/anaconda/envs/AryaEnv/bin/python" value="false" />
+        <entry key="/usr/bin/python2.7" value="false" />
+      </map>
+    </option>
+    <option name="SDK_TO_ATTEST">
+      <map>
+        <entry key="/System/Library/Frameworks/Python.framework/Versions/2.6/bin/python2.6" value="false" />
+        <entry key="/System/Library/Frameworks/Python.framework/Versions/2.7/bin/python2.7" value="false" />
+        <entry key="$USER_HOME$/.conda/envs/xxx/bin/python2.7" value="false" />
+        <entry key="/anaconda/bin/python2.7" value="false" />
+        <entry key="/opt/anaconda/anaconda/envs/AryaEnv/bin/python" value="false" />
+        <entry key="/usr/bin/python2.7" value="false" />
+      </map>
+    </option>
+  </component>
+</application>
