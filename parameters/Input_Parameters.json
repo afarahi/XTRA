@@ -1,0 +1,15 @@
+{"Energy_Unit": "ergs",
+  "Mass_limit": 1.0e13,
+  "F_limit": 2.5e-14,
+  "Lxm_model": "Mantz_et_al_2016",
+  "Txm_model": "Mantz_et_al_2016",
+  "rTL_correlation": 0.0,
+  "L_to_Flux_model_file_name": "CRb05-2_overdl2.fits",
+  "Flux_energy_band": "[0.5-2.0]",
+  "Surface_Brightness": "beta",
+  "SB_beta_bar": 0.6667,
+  "SB_beta_sig": 0.000001,
+  "xc_bar": 0.14,
+  "xc_sig": 0.000001,
+  "xc_Beta_r": 0.0
+}
