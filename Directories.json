@@ -1,0 +1,5 @@
+{"Halo_dir":"./Catalog/Input_File/",
+  "Cluster_dir":"./Catalog/Output_File/",
+  "SB_Map_dir":"./Catalog/Maps/Surface_Brightness/",
+  "Event_Map_dir":"./Catalog/Maps/Event_Map/"
+}

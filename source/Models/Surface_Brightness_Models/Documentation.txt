@@ -1,0 +1,23 @@
+THIS IS NOT INTEGRATED WITH THE CODE.
+THE CODE ASSUMES ONLY SIMPLE BETA PROFILE
+
+option 1:
+simpleBetaProfile:
+
+In this function I am using the simple beta profile with beta = 0.666 and using
+classic beta function to claculate surfacebrightness. Here I am assuming 
+xc = Rc/R500 = 0.2 and there is no scattering in beta and fc. 
+
+option 2:
+simpleDoubleBetaProfile:
+
+In this function I am using double beta profile prescription to mimic CC and NCC
+component. Here I am assuming just one varibale for beta_1 and beta_2. Really it
+is not CC/NCC but it gets closer to that point. xc has the same definition as
+option 1 and fS = S02/S01. Look at option 3 for CC/NCC component.
+beta1 = 0.666, beta2 = 0.666, xc1 = 0.2, xc2 = 0.2, fS = 1 (I should change
+this parameters)
+
+option 3:
+simpleCCandNCCProfile  
+combination of option 1 and 2 with fCC = number of CC clusters / tot number of clusters
