@@ -46,13 +46,14 @@ class Halos_Class():
        self.DECref = 0.0
        # self.OutputParam = Output_Parameters()
 
-   def readPDistance(self, Z):
+   def readPDistance(self, Z): # read proper distance
 
        ztab, rtab = np.loadtxt("./Output/tabulated_data/Proper_Distance.txt", unpack=True)
        lenztab = len(ztab); maxztab = max(ztab)
        PDis = np.zeros(len(Z))
        for i in range(len(Z)):
            zloc= int(lenztab*Z[i]/maxztab)
+           # interpolate:
            PDis[i] = rtab[zloc] + (Z[i]-ztab[zloc])*(rtab[zloc+1]-rtab[zloc])/(ztab[zloc+1]-rtab[zloc])
        return PDis
 
@@ -244,7 +245,7 @@ class Map_Halos_Class:
              self.fname = fname[:-4]
              self.halosDataExist = True
              self.XrayBandstr = hdr['XRAYBAND']
-             print("Number of clusters are : %i"%len(clusters[:]['Z']))
+             print("Number of clusters: %i"%len(clusters[:]['Z']))
        except KeyError:
              print("The input table has some problem. ")
              print("It is not consistent with XTRA table structure.")

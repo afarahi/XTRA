@@ -129,7 +129,9 @@ class Xray_Band_Class:
         L12 = self.L_CUBE[iZ][ilgT + 1]
         L22 = self.L_CUBE[iZ + 1][ilgT + 1]
 
-        CRPERLx = (L11 * (Z2 - Z) * (T2 - lgT) + L21 * (Z - Z1) * (T2 - lgT) +
-                   L12 * (Z2 - Z) * (lgT - T1) + L22 * (Z - Z1) * (lgT - T1)) / ((Z2 - Z1) * (T2 - T1))
+        CRPERLx = (L11 * (Z2 - Z) * (T2 - lgT) 
+                 + L21 * (Z - Z1) * (T2 - lgT) 
+                 + L12 * (Z2 - Z) * (lgT - T1) 
+                 + L22 * (Z - Z1) * (lgT - T1)) / ((Z2 - Z1) * (T2 - T1))
 
         return CRPERLx * np.power(10.0, lgLx)

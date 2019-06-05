@@ -1,6 +1,6 @@
 {"Unit": "ergs / s / cm^2 / pixel",
   "Flux_energy_band": "[0.5-2.0]",
-  "DEC_map_size": 1.856,
-  "RA_map_size": 1.856,
+  "DEC_map_size": 0.6,
+  "RA_map_size": 0.6,
   "Num_pixels": 1536
 }

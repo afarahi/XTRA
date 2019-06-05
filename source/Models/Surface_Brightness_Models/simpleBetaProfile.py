@@ -28,8 +28,20 @@ class Surface_Brightness_Model():
       if (iMax<=0 or jMax<=0): return 0
 
       i,j = np.mgrid[iMin:iMax,jMin:jMax]
-      mask = (i-RApix)**2 + (j-DECpix)**2 < effRad**2
-      mapA = mask*( 1. + ((RApix - i)**2 + (DECpix - j)**2)/thetac2 )**bpower
+      if 1: # use original method of all circular halos
+        mask = (i-RApix)**2 + (j-DECpix)**2 < effRad**2
+        mapA = mask*( 1. + ((RApix - i)**2 + (DECpix - j)**2)/thetac2 )**bpower
+      else: # generate random orientation and ellipticity for each halo
+        thetaOrient = np.random.random((iMax-iMin,jMax-jMin))*2*np.pi
+        # ellipticity = np.random.random((iMax-iMin,jMax-jMin))*0.5
+        ellipticity = 0.5
+        x = i-RApix; y = j-DECpix; 
+        coords = (x*np.cos(thetaOrient)+y*np.sin(thetaOrient))**2 \
+               + (x*np.sin(thetaOrient)-y*np.cos(thetaOrient))**2/(1-ellipticity**2)
+        mask = coords < effRad**2
+        mapA = mask*( 1. + coords/thetac2)**bpower
+        del thetaOrient, ellipticity, x, y, coords
+      
       mapA *= Halos.F[samplei] / sum(sum(mapA))
 
       iMaxA = min(iMax,pixelSide)

@@ -20,7 +20,7 @@ class Map_Parameters_Class:
         self.RAMapSize = _param["RA_map_size"]  # in degree
         # Number of pixels in each side
         self.PixSide = _param["Num_pixels"]
-
+        
 
 class Map_Class:
 
@@ -123,24 +123,144 @@ class Map_Class:
         plt.grid()
         plt.show()
 
-    def saveMapPic(self):
+    def saveMapPic(self,draw_halos=False,Halos=False):
+        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+        # imports 
         import matplotlib.pyplot as plt
-
+        from mpl_toolkits.axes_grid1 import make_axes_locatable
+        
+        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+        # check path; create if not exant
         path = FDIR_SB_MAP_SAVE
         if not os.path.exists(path): os.makedirs(path)
         fname = path + self.fname + r'_' + self.MPa.XrayBandstr + r'.pdf'
-
-        plt.figure()
-        plt.clf()
+        
+        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+        # set pixilation
+        my_dpi = 96. # for WKB screen
+        pxs = 750 # pixilation
+        plt.figure(figsize=(pxs/my_dpi,pxs/my_dpi), dpi=my_dpi)
+        # plt.clf()
+        
+        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+        # draw flux picture
+        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+        
+        # using vmax=None increases color contrast
+        # but limits comparison between plots (formerly: vmax=-14)
         plt.imshow(np.log10(self.MAP / 6.24e8 + 1e-20).T,
-                   aspect='auto', origin='lower', vmin=-18, vmax=-14,
-                   extent=(self.RAmin, self.RAmax, self.DECmin, self.DECmax))
-        plt.colorbar()
+                   aspect='auto', origin='lower', vmin=-18, vmax=-15.25,
+                   extent=(self.RAmin, self.RAmax, self.DECmin, self.DECmax),
+                   cmap='afmhot') # 'gist_heat') #'afmhot')
+        
+        # set tight colorbar for flux
+        ax1 = plt.gca()
+        divider = make_axes_locatable(ax1)
+        cax = divider.append_axes("right", size="5%", pad=0.05)
+        cbar = plt.colorbar(label=r'$\log_{10}$ flux (erg/s/cm$^2$/px)',cax=cax)
+        plt.sca(ax1) # return to original axis
+        
+        # set axis labels 
         plt.xlabel('RA', {'fontsize': 20})
         plt.ylabel('DEC', {'fontsize': 20})
         plt.title('DEC =%.2f , RA =%.2f ' % (self.DECc, self.RAc), {'fontsize': 20})
-        plt.grid()
-        plt.savefig(fname)
+        
+        if not draw_halos: # add a grid onto the data
+          plt.grid()
+        else: # WKB
+          ax1.axhline(0,linestyle='--',color='k')
+          ax1.axvline(0,linestyle='--',color='k')
+          print "Drawing R500 for each halo"
+          
+          # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+          # import the halo set
+          
+          # read in xc_bar:
+          with open('parameters/Input_Parameters.json') as fp:
+            _inputParam = json.load(fp) # read in all input parameters
+          xc_bar = _inputParam["xc_bar"]
+          
+          # pull in halo attributes: 
+          radii = Halos.Rc/xc_bar
+          if 0: print 'radii:',radii[-10:],max(radii)
+          ra,dec = np.array(Halos.RA),np.array(Halos.DEC)
+          # there's no "Halos.M500" attribute, so color by redshift
+          # nor {M200, M200b, M2500, MVIR, mass, M}!
+          z = Halos.Z
+          
+          # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+          # for each halo in the set
+          
+          # create colormapping
+          from matplotlib import cm
+          colormap = 'coolwarm'
+          cw = cm.get_cmap(colormap)
+          if 0: # use dynamic mapping (different for each plot)
+            colors = cw((z-min(z))/(max(z)-min(z)))
+          else: # use static mapping (0.1--0.3 for each plot) 
+            min_z,max_z = .1,.3
+            colors = cw((z-min_z)/(max_z-min_z))
+          
+          # create list of circles to draw
+          output_list = []
+          for i in range(len(ra)):
+              output_list.append(plt.Circle((ra[i],dec[i]),radii[i],
+                                 color=colors[i],fill=False))
+          ax = plt.gca() #aspect='equal') # for some reason, equal messes things up...
+          L = self.MPa.DECMapSize/2
+          # ax.set_xlim(-L,L); ax.set_ylim(-L,L)
+          for circle in output_list:    
+            ax.add_artist(circle)
+        
+        from sys import argv
+        if len(argv)>3: # draw clusters using the argv for an HID
+          HID = int(argv[3])
+          print "Drawing cluster radius using halo %i" % HID
+          
+          if 0: HID = 10450059 # 13133502 # HARDCODE
+          
+          # scan in from xtools bicycle output
+          xtools = '/home/wkblack/projects/xproject/xtools/'
+          halo_fname = xtools + 'output_bicycle.csv'
+          dat = np.loadtxt(halo_fname,delimiter=',')
+          HID1 = dat[:,0]; idx_mask = HID1==int(HID)
+          halo_lam = dat[idx_mask,4]; halo_z = dat[idx_mask,5]
+          halo_ra = dat[idx_mask,6]; halo_dec = dat[idx_mask,7]
+          
+          # calculate thetas using cosmology of Aardvark
+          from sys import path
+          path.insert(0,xtools)
+          from cosmology import theta_R_lambda, to_degrees
+          theta_R_lambda = theta_R_lambda(halo_lam,halo_z) # 0.086697
+          theta_500kpc = to_degrees(.5,halo_z) # 500 kpc in degrees
+          
+          # draw on circles (background & foreground)
+          ax.add_artist(plt.Circle((0,0),theta_R_lambda,
+                         color='k',fill=False,lw=3))
+          ax.add_artist(plt.Circle((0,0),theta_R_lambda,
+                         color='lime',fill=False))
+          
+          ax.add_artist(plt.Circle((0,0),theta_500kpc,
+                         color='k',fill=False,lw=3))
+          ax.add_artist(plt.Circle((0,0),theta_500kpc,
+                         color='w',fill=False))
+          plt.title(r'Cluster HID$_1$ : %i' '\n'
+                    r'(RA,DEC,$z$,$\lambda$)=(%.2f,%.2f,%.2f,%.2f)' \
+                    % (HID,halo_ra,halo_dec,halo_z,halo_lam),{'fontsize': 20})
+        
+        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+        if 0: # set tight colorbar for redshift
+          # divider = make_axes_locatable(ax1)
+          # cax = divider.append_axes("top", size="5%", pad=0.05)
+          plt.scatter(colors,colors,c=z3,cmap='coolwarm') 
+          plt.gca().set_visible(False)
+          plt.colorbar(label=r'Redshift $z$',orientation='horizontal')
+          plt.sca(ax1) # return to original axis
+        
+        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+        # finish up and exit 
+        # plt.tight_layout()
+        plt.savefig(fname,dpi=my_dpi)
         plt.close()
 
     def saveMapFits(self):
@@ -152,7 +272,7 @@ class Map_Class:
         if not os.path.exists(path): os.makedirs(path)
         fdir = path + self.fname + r'_' + self.MPa.XrayBandstr + r'.fit'
 
-        print("Removing old halo/map catalog (if exist) : %s"%fdir)
+        print("Removing old halo/map catalog (if exists) : %s"%fdir)
         os.system('rm -r -f %s' % fdir)
         print('Saving data %s'%self.fname)
 
@@ -190,5 +310,47 @@ class Map_Class:
         self.fname = clusters.fname
 
 
+    def drawHaloBounds(self, Halos): 
+        print "Drawing..."
+        # get input ra+dec and R500 scaled to an angular size (Rc/xc_bar)
+        
+        # read in xc_bar:
+        with open('parameters/Input_Parameters.json') as fp:
+          _inputParam = json.load(fp) # read in all input parameters
+        xc_bar = _inputParam["xc_bar"]
+        
+        # pull in halo attributes: 
+        radii = Halos.Rc/xc_bar
+        if 1: print 'radii:',radii[-10:],max(radii)
+        ra,dec = np.array(Halos.RA),np.array(Halos.DEC)
+        z = Halos.Z
+        try: 
+          m500 = Halos.M500
+        except AttributeError: 
+          print "no mass!"
+        
+        from matplotlib import cm
+        # nor {M200, M200b, M2500, MVIR, mass, M}!
+        colormap = 'coolwarm'
+        cw = cm.get_cmap(colormap)
+        colors = cw((z-min(z))/(max(z)-min(z))) # (0.1,0.2,0.3)
+        
+        output_list = []
+        import matplotlib.pyplot as plt
+        for i in range(len(ra)):
+            output_list.append(plt.Circle((ra[i],dec[i]),radii[i],
+                               color=colors[i],fill=False))
+        ax = plt.gca(aspect='equal')
+        ax.cla()
+        L = self.MPa.DECMapSize/2
+        ax.set_xlim(-L,L); ax.set_ylim(-L,L)
+        for circle in output_list:    
+           ax.add_artist(circle)
+        
+        ax.set_xlabel('RA')
+        ax.set_ylabel('DEC')
+        outname = "halo_circles.png"
+        plt.savefig(outname)
+        # plt.show() 
 
 

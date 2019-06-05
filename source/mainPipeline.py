@@ -71,12 +71,22 @@ def makingXRayRealization():
     Map.addClusters2Map(clusters)
     eTime = time.time()-sTime
     print "Eplased time to add clusters to the surface brightness map: ", eTime, " s"
+    
+    if 0: 
+      # WKB method: 
+      sTime = time.time()
+      Map.drawHaloBounds(clusters) 
+      eTime = time.time()-sTime
+      print "Elapsed time for drawing:",eTime," s"
 
     ##################################################################
     #@@@@ STEP 4 [Saving maps]
     #@@@@
     sTime = time.time()
-    Map.saveMapPic()
+    if 0: 
+      Map.saveMapPic()
+    else: 
+      Map.saveMapPic(draw_halos=True,Halos=clusters) # WKB
     Map.saveMapFits()
     eTime = time.time()-sTime
     print "Eplased time to save map: ", eTime, " s"

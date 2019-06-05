@@ -11,7 +11,7 @@ __date__ = _info['date']
 
 del _info
 
-__logo__ = " ##############################################################\n"
+__logo__ =  " ##############################################################\n"
 __logo__ += " ##                                                 V.%s  ##\n"%__version__
 __logo__ += " ##  XX      XX     XXXXXXXXXXXX   XXXXXXX         xXXx      ##\n"
 __logo__ += " ##   XX    XX           XX        XX    XX       XXxxXX     ##\n"
