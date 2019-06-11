@@ -212,6 +212,9 @@ class Map_Class:
           for circle in output_list:    
             ax.add_artist(circle)
         
+        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+        # draw clusters using the argv for HID1
+        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
         from sys import argv
         if len(argv)>3: # draw clusters using the argv for an HID
           HID = int(argv[3])
@@ -224,15 +227,34 @@ class Map_Class:
           halo_fname = xtools + 'output_bicycle.csv'
           dat = np.loadtxt(halo_fname,delimiter=',')
           HID1 = dat[:,0]; idx_mask = HID1==int(HID)
-          halo_lam = dat[idx_mask,4]; halo_z = dat[idx_mask,5]
-          halo_ra = dat[idx_mask,6]; halo_dec = dat[idx_mask,7]
+          cluster_lam = dat[idx_mask,4]; cluster_z = dat[idx_mask,5]
+          cluster_ra = dat[idx_mask,6]; cluster_dec = dat[idx_mask,7]
+          
+          if 1: # grab nearby clusters
+            thetamax = .2 # maximum R_lambda
+            width = self.MPa.DECMapSize/2 + thetamax
+            min_ra = cluster_ra-width
+            max_ra = cluster_ra+width
+            min_dec = cluster_ra-width
+            max_dec = cluster_ra+width
+            proximity_mask = (dat[:,6]>min_ra)*(dat[:,6]<max_ra) \
+                            *(dat[:,7]>min_dec)*(dat[:,7]<max_dec)
+            print 'proximity count :',len(proximity_mask)
+          
+          # check if halo is duplicate; if so, read option from argv
+          if len(cluster_lam)>1: # select
+            print "Halo is degenerate; reading in selection from argv."
+            i = int(argv[4]) # choice
+            cluster_lam = cluster_lam[i]; cluster_z = cluster_z[i]
+            cluster_ra = cluster_ra[i]; cluster_dec = cluster_dec[i]
           
           # calculate thetas using cosmology of Aardvark
           from sys import path
           path.insert(0,xtools)
           from cosmology import theta_R_lambda, to_degrees
-          theta_R_lambda = theta_R_lambda(halo_lam,halo_z) # 0.086697
-          theta_500kpc = to_degrees(.5,halo_z) # 500 kpc in degrees
+          
+          theta_R_lambda = theta_R_lambda(cluster_lam,cluster_z) # 0.086697
+          theta_500kpc = to_degrees(.5,cluster_z) # 500 kpc in degrees
           
           # draw on circles (background & foreground)
           ax.add_artist(plt.Circle((0,0),theta_R_lambda,
@@ -246,7 +268,7 @@ class Map_Class:
                          color='w',fill=False))
           plt.title(r'Cluster HID$_1$ : %i' '\n'
                     r'(RA,DEC,$z$,$\lambda$)=(%.2f,%.2f,%.2f,%.2f)' \
-                    % (HID,halo_ra,halo_dec,halo_z,halo_lam),{'fontsize': 20})
+                    % (HID,cluster_ra,cluster_dec,cluster_z,cluster_lam),{'fontsize': 20})
         
         # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
         if 0: # set tight colorbar for redshift

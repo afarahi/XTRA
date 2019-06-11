@@ -24,6 +24,7 @@ class Surface_Brightness_Model():
 
       iMax = int(RApix+effRad);   iMin = int(RApix-effRad)
       jMax = int(DECpix+effRad);  jMin = int(DECpix-effRad)
+      # if the halo wouldn't show on the plot; don't bother. 
       if (iMin>=pixelSide-1 or jMin>=pixelSide-1): return 0
       if (iMax<=0 or jMax<=0): return 0
 
