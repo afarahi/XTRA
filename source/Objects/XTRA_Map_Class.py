@@ -163,10 +163,10 @@ class Map_Class:
         # set axis labels 
         plt.xlabel('RA', {'fontsize': 20})
         plt.ylabel('DEC', {'fontsize': 20})
-        plt.title('DEC =%.2f , RA =%.2f ' % (self.DECc, self.RAc), {'fontsize': 20})
         
         if not draw_halos: # add a grid onto the data
           plt.grid()
+          plt.title('DEC =%.2f , RA =%.2f ' % (self.DECc, self.RAc), {'fontsize': 20})
         else: # WKB
           ax1.axhline(0,linestyle='--',color='k')
           ax1.axvline(0,linestyle='--',color='k')
@@ -225,10 +225,10 @@ class Map_Class:
           # scan in from xtools bicycle output
           xtools = '/home/wkblack/projects/xproject/xtools/'
           halo_fname = xtools + 'output_bicycle.csv'
-          dat = np.loadtxt(halo_fname,delimiter=',')
+          dat = np.loadtxt(halo_fname,delimiter=',',skiprows=1)
           HID1 = dat[:,0]; idx_mask = HID1==int(HID)
           cluster_lam = dat[idx_mask,4]; cluster_z = dat[idx_mask,5]
-          cluster_ra = dat[idx_mask,6]; cluster_dec = dat[idx_mask,7]
+          cluster_ra = dat[idx_mask,8]; cluster_dec = dat[idx_mask,9]
           
           if 1: # grab nearby clusters
             thetamax = .2 # maximum R_lambda
