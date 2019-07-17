@@ -65,7 +65,12 @@ class Halos_Class():
        self.fname = fname
 
        fname, Halos, hdr = Read_Halos_Catalog_fit_file(fname=self.fname, fdir=FDIR_HALOS)
-
+       
+       if len(Halos)<1:
+           print "ERROR: halo dataset empty! Perhaps mass limit is too high?"
+           # vetting occurs here, at: XTRA/source/Objects/XTRA_Halos_Class.py +20
+           raise SystemExit
+       
        if fname:
            self.RA = Halos['RA']
            self.DEC = Halos['DEC']
