@@ -33,8 +33,8 @@ class Surface_Brightness_Model():
         mask = (i-RApix)**2 + (j-DECpix)**2 < effRad**2
         mapA = mask*( 1. + ((RApix - i)**2 + (DECpix - j)**2)/thetac2 )**bpower
       else: # generate random orientation and ellipticity for each halo
-        thetaOrient = np.random.random((iMax-iMin,jMax-jMin))*2*np.pi
-        # ellipticity = np.random.random((iMax-iMin,jMax-jMin))*0.5
+        thetaOrient = np.random.random()*2*np.pi
+        # ellipticity = np.random.random()*0.5
         ellipticity = 0.5
         x = i-RApix; y = j-DECpix; 
         coords = (x*np.cos(thetaOrient)+y*np.sin(thetaOrient))**2 \
