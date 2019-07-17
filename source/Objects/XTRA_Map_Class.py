@@ -230,6 +230,13 @@ class Map_Class:
           cluster_lam = dat[idx_mask,4]; cluster_z = dat[idx_mask,5]
           cluster_ra = dat[idx_mask,8]; cluster_dec = dat[idx_mask,9]
           
+          # check if halo is duplicate; if so, read option from argv
+          if len(cluster_lam)>1: # select
+            print "Halo is degenerate; reading in selection from argv."
+            i = int(argv[4]) # choice
+            cluster_lam = cluster_lam[i]; cluster_z = cluster_z[i]
+            cluster_ra = cluster_ra[i]; cluster_dec = cluster_dec[i]
+          
           if 1: # grab nearby clusters
             thetamax = .2 # maximum R_lambda
             width = self.MPa.DECMapSize/2 + thetamax
@@ -240,13 +247,6 @@ class Map_Class:
             proximity_mask = (dat[:,6]>min_ra)*(dat[:,6]<max_ra) \
                             *(dat[:,7]>min_dec)*(dat[:,7]<max_dec)
             print 'proximity count :',len(proximity_mask)
-          
-          # check if halo is duplicate; if so, read option from argv
-          if len(cluster_lam)>1: # select
-            print "Halo is degenerate; reading in selection from argv."
-            i = int(argv[4]) # choice
-            cluster_lam = cluster_lam[i]; cluster_z = cluster_z[i]
-            cluster_ra = cluster_ra[i]; cluster_dec = cluster_dec[i]
           
           # calculate thetas using cosmology of Aardvark
           from sys import path
